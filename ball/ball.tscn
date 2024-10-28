@@ -35,7 +35,6 @@ script = ExtResource("3_fihql")
 [node name="HitBox2D" type="Area2D" parent="."]
 collision_layer = 4
 script = ExtResource("4_kjut1")
-damage = 1
 damage_source = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox2D"]

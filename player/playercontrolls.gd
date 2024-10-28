@@ -176,11 +176,11 @@ func _apply_gravity(delta) -> void:
 	if velocity.y <= max_velocity:
 		applied_gravity = gravity_acceleration * delta
 		
-	#if velocity.y < 0 and velocity.y > jump_gravity_max:
-		#applied_gravity = 0
-	#
-	#if abs(velocity.y) < jump_hang_treshold:
-		#applied_gravity *= jump_hang_gravity_mult
+	if velocity.y < 0 and velocity.y > jump_gravity_max:
+		applied_gravity = 0
+	
+	if abs(velocity.y) < jump_hang_treshold:
+		applied_gravity *= jump_hang_gravity_mult
 		
 	if current_state == States.SLIDING:
 		applied_gravity = sliding_grav * delta
