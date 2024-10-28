@@ -86,7 +86,6 @@ offset_left = 67.0
 offset_top = 632.0
 offset_right = 213.0
 offset_bottom = 716.0
-text = "state"
 label_settings = SubResource("LabelSettings_0ajpe")
 script = ExtResource("6_8x4rn")
 player = NodePath("../Player")
@@ -99,7 +98,7 @@ position = Vector2(185, 389)
 player = NodePath("../Player")
 
 [node name="Player" parent="." instance=ExtResource("3_whgff")]
-position = Vector2(706, 1007)
+position = Vector2(708, 1033)
 
 [node name="Node2D" type="Node2D" parent="."]
 

@@ -27,13 +27,15 @@ const DECELERATION = 5000.0
 const TURNING_ACC = 3000.0
 
 #bools
-var can_move: bool = true
 var can_jump: bool = true
 
 @onready var r_1: RayCast2D = $R1
 @onready var r_2: RayCast2D = $R2
 @onready var _hurt_box: HurtBox2D = %HurtBox2D
 
+#timers
+@onready var jump_buffer_timer: Timer = %JumpBufferTimer
+@onready var coyote_timer: Timer = %CoyoteTimer
 #states
 enum States {
 	IDLE,
@@ -45,32 +47,35 @@ enum States {
 	DIED,
 	
 }
+var previous_state: States = States.IDLE
+
 var current_state = States.IDLE:
 	set = set_current_state
 
 
 func set_current_state(new_state: States) -> void:
+	previous_state = current_state
 	current_state = new_state
 	
 	match current_state:
 		
 		States.IDLE:
-			can_move = true
+			pass
 		States.MOVING:
 			pass
 		States.AIR:
-			pass
+			if previous_state == States.MOVING or previous_state == States.IDLE:
+				if velocity.y > 0:
+					coyote_timer.start()
 		States.SLIDING:
 			velocity = Vector2.ZERO
 		States.ATTACKING:
 			%Animations.play("swing_attack")
 			velocity = Vector2.ZERO
-			can_move = false
 		States.STAGGER:
 			velocity = Vector2.ZERO
 			_hurt_box.set_deferred("monitorable", false)
 			_hurt_box.set_deferred("monitoring", false)
-			can_move = false
 			get_tree().create_timer(stagger_amount).timeout.connect(func() -> void:
 				_hurt_box.set_deferred("monitorable", true)
 				_hurt_box.set_deferred("monitoring", true)
@@ -83,11 +88,20 @@ func _ready() -> void:
 	_hurt_box.took_hit.connect(func _on_hurtbox_took_hit(hit_box: HitBox2D) -> void:
 		take_damage(hit_box.damage)
 	)
+	coyote_timer.timeout.connect(func () -> void:
+		can_jump = false
+	)
+	jump_buffer_timer.timeout.connect(func () -> void:
+		can_jump = false
+	)
 
 func _physics_process(delta: float) -> void:
+	
+	
 	match current_state:
 		
 		States.IDLE:
+			_movement(delta)
 			if velocity.x != 0 and is_on_floor():
 				set_current_state(States.MOVING)
 			
@@ -95,6 +109,7 @@ func _physics_process(delta: float) -> void:
 				set_current_state(States.AIR)
 
 		States.MOVING:
+			_movement(delta)
 			if velocity.x == 0:
 				set_current_state(States.IDLE)
 			
@@ -102,6 +117,7 @@ func _physics_process(delta: float) -> void:
 				set_current_state(States.AIR)
 
 		States.AIR:
+			_movement(delta)
 			if  is_on_floor() and velocity.x != 0:
 				set_current_state(States.MOVING)
 			
@@ -112,6 +128,7 @@ func _physics_process(delta: float) -> void:
 				set_current_state(States.SLIDING)
 
 		States.SLIDING:
+			_movement(delta)
 			if is_on_floor() and velocity.x == 0:
 				set_current_state(States.IDLE)
 				
@@ -123,17 +140,28 @@ func _physics_process(delta: float) -> void:
 				
 			if !is_on_floor() and !is_on_wall():
 				set_current_state(States.AIR)
-
-	_movement(delta)
+				
+	jump()
 	_apply_gravity(delta)
 	move_and_slide()
 
-func _unhandled_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y += -jump_force
-	if Input.is_action_just_released("jump"):
-		velocity.y -= (jump_cut * velocity.y)
+func jump() -> void:
+	if is_on_floor():
+		can_jump = true
 		
+	if current_state == States.ATTACKING:
+		can_jump = false
+		
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_timer.start()
+		
+		if can_jump:
+			velocity.y = -jump_force
+			can_jump = false
+	
+	
+func _unhandled_input(event: InputEvent) -> void:
+	
 	if Input.is_action_just_pressed("attack"):
 		set_current_state(States.ATTACKING)
 
@@ -144,9 +172,6 @@ func take_damage(amount: float) -> void:
 	
 
 func _movement(delta) -> void:
-	if !can_move:
-		return
-	
 	direction = Input.get_axis("move_left", "move_right")
 	if direction == 0:
 		velocity.x = Vector2(velocity.x, 0).move_toward(Vector2(0,0), DECELERATION * delta).x
@@ -168,7 +193,7 @@ func set_direction(hor_direction) -> void:
 	face_direction = hor_direction
 
 func _apply_gravity(delta) -> void:
-	if current_state == States.ATTACKING:
+	if current_state == States.ATTACKING or current_state == States.STAGGER:
 		return
 	
 	var applied_gravity : float = 0
@@ -184,6 +209,7 @@ func _apply_gravity(delta) -> void:
 		
 	if current_state == States.SLIDING:
 		applied_gravity = sliding_grav * delta
+		
 		
 		
 	velocity.y += applied_gravity
