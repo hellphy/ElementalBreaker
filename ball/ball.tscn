@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://bgi15xx0wq141"]
+
+[ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_c7bfx"]
+[ext_resource type="Script" path="res://ball/ball.gd" id="1_mvk4e"]
+[ext_resource type="Script" path="res://ball/guide.gd" id="3_fihql"]
+[ext_resource type="Script" path="res://custom_nodes/hit_box_2d.gd" id="4_kjut1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_r7vdb"]
+radius = 26.0192
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_6vij1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qqulp"]
+radius = 44.0114
+
+[node name="Ball" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 10
+script = ExtResource("1_mvk4e")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.46875, 0.46875)
+texture = ExtResource("1_c7bfx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_r7vdb")
+
+[node name="guide" type="Sprite2D" parent="."]
+position = Vector2(-7.62939e-06, 0)
+scale = Vector2(121.5, 1)
+texture = SubResource("CanvasTexture_6vij1")
+offset = Vector2(0.5, 0)
+script = ExtResource("3_fihql")
+
+[node name="HitBox2D" type="Area2D" parent="."]
+collision_layer = 4
+script = ExtResource("4_kjut1")
+damage = 1
+damage_source = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox2D"]
+shape = SubResource("CircleShape2D_qqulp")

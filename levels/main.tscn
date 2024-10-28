@@ -1,0 +1,176 @@
+[gd_scene load_steps=10 format=3 uid="uid://b65mixf7jmchi"]
+
+[ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_vfmu5"]
+[ext_resource type="PackedScene" uid="uid://bgi15xx0wq141" path="res://ball/ball.tscn" id="2_uv6mk"]
+[ext_resource type="PackedScene" uid="uid://kuq7x2g7j52a" path="res://player/player.tscn" id="3_whgff"]
+[ext_resource type="PackedScene" uid="uid://d2yp4v6pjpdr2" path="res://enemies/turret/enemy.tscn" id="4_jl1ko"]
+[ext_resource type="Script" path="res://player/velocitydebug.gd" id="5_kn302"]
+[ext_resource type="Script" path="res://player/DebugLabel.gd" id="6_8x4rn"]
+[ext_resource type="PackedScene" uid="uid://b3r2g52v143oj" path="res://enemies/blocks/structures.tscn" id="7_pxjr4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_02v6l"]
+size = Vector2(1839, 40)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0ajpe"]
+font_size = 60
+
+[node name="Main" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1901.0
+offset_bottom = 1033.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.847059, 0.317647, 0.317647, 1)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 8
+collision_mask = 7
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(19.5, 543)
+scale = Vector2(0.429688, 8.76563)
+texture = ExtResource("1_vfmu5")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(26, 413)
+rotation = -1.5708
+shape = SubResource("RectangleShape2D_02v6l")
+
+[node name="Sprite2D2" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(1890, 585.5)
+scale = Vector2(0.328125, 8.63281)
+texture = ExtResource("1_vfmu5")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1895, 402)
+rotation = 1.57079
+shape = SubResource("RectangleShape2D_02v6l")
+
+[node name="Sprite2D3" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(967.656, -9.00069)
+rotation = 1.57079
+scale = Vector2(0.328125, 14.4631)
+texture = ExtResource("1_vfmu5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(973.5, -11)
+shape = SubResource("RectangleShape2D_02v6l")
+
+[node name="Sprite2D4" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(969.238, 1055)
+rotation = 1.57079
+scale = Vector2(0.328125, 14.0451)
+texture = ExtResource("1_vfmu5")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(952.962, 1054)
+rotation = 3.14159
+shape = SubResource("RectangleShape2D_02v6l")
+
+[node name="velocity" type="Label" parent="." node_paths=PackedStringArray("player")]
+offset_left = 65.0
+offset_top = 536.0
+offset_right = 287.0
+offset_bottom = 619.0
+text = "velocity"
+label_settings = SubResource("LabelSettings_0ajpe")
+script = ExtResource("5_kn302")
+player = NodePath("../Player")
+
+[node name="states" type="Label" parent="." node_paths=PackedStringArray("player")]
+offset_left = 67.0
+offset_top = 632.0
+offset_right = 213.0
+offset_bottom = 716.0
+text = "state"
+label_settings = SubResource("LabelSettings_0ajpe")
+script = ExtResource("6_8x4rn")
+player = NodePath("../Player")
+
+[node name="Ball" parent="." instance=ExtResource("2_uv6mk")]
+position = Vector2(1106, 783)
+
+[node name="enemy" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_jl1ko")]
+position = Vector2(185, 389)
+player = NodePath("../Player")
+
+[node name="Player" parent="." instance=ExtResource("3_whgff")]
+position = Vector2(706, 1007)
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Structures" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(399, 223)
+
+[node name="Structures2" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(565, 223)
+
+[node name="Structures3" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(738, 223)
+
+[node name="Structures4" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(902, 223)
+
+[node name="Structures5" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1078, 223)
+
+[node name="Structures6" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1238, 223)
+
+[node name="Structures7" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1404, 223)
+
+[node name="Structures8" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1575, 223)
+
+[node name="Structures9" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(387, 339)
+
+[node name="Structures10" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(553, 339)
+
+[node name="Structures11" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(726, 339)
+
+[node name="Structures12" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(890, 339)
+
+[node name="Structures13" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1066, 339)
+
+[node name="Structures14" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1226, 339)
+
+[node name="Structures15" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1392, 339)
+
+[node name="Structures16" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1563, 339)
+
+[node name="Structures17" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(383, 471)
+
+[node name="Structures18" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(549, 471)
+
+[node name="Structures19" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(722, 471)
+
+[node name="Structures20" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(886, 471)
+
+[node name="Structures21" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1062, 471)
+
+[node name="Structures22" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1222, 471)
+
+[node name="Structures23" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1388, 471)
+
+[node name="Structures24" parent="Node2D" instance=ExtResource("7_pxjr4")]
+position = Vector2(1559, 471)
