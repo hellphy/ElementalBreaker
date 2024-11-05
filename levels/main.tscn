@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://b65mixf7jmchi"]
+[gd_scene load_steps=9 format=3 uid="uid://b65mixf7jmchi"]
 
 [ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_vfmu5"]
 [ext_resource type="PackedScene" uid="uid://bgi15xx0wq141" path="res://ball/ball.tscn" id="2_uv6mk"]
 [ext_resource type="PackedScene" uid="uid://kuq7x2g7j52a" path="res://player/player.tscn" id="3_whgff"]
-[ext_resource type="PackedScene" uid="uid://d2yp4v6pjpdr2" path="res://enemies/turret/enemy.tscn" id="4_jl1ko"]
 [ext_resource type="Script" path="res://player/velocitydebug.gd" id="5_kn302"]
 [ext_resource type="Script" path="res://player/DebugLabel.gd" id="6_8x4rn"]
 [ext_resource type="PackedScene" uid="uid://b3r2g52v143oj" path="res://enemies/blocks/structures.tscn" id="7_pxjr4"]
@@ -17,16 +16,21 @@ font_size = 60
 [node name="Main" type="Node2D"]
 
 [node name="ColorRect" type="ColorRect" parent="."]
+z_index = -10
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1901.0
-offset_bottom = 1033.0
+offset_left = -512.0
+offset_top = -310.0
+offset_right = 2425.0
+offset_bottom = 1316.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.847059, 0.317647, 0.317647, 1)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(-436, -322)
+scale = Vector2(1.50216, 1.50216)
 collision_layer = 8
 collision_mask = 7
 
@@ -72,6 +76,7 @@ rotation = 3.14159
 shape = SubResource("RectangleShape2D_02v6l")
 
 [node name="velocity" type="Label" parent="." node_paths=PackedStringArray("player")]
+visible = false
 offset_left = 65.0
 offset_top = 536.0
 offset_right = 287.0
@@ -93,83 +98,74 @@ player = NodePath("../Player")
 [node name="Ball" parent="." instance=ExtResource("2_uv6mk")]
 position = Vector2(1106, 783)
 
-[node name="enemy" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_jl1ko")]
-position = Vector2(185, 389)
-player = NodePath("../Player")
-
 [node name="Player" parent="." instance=ExtResource("3_whgff")]
-position = Vector2(708, 1033)
+position = Vector2(677, 1230)
 
 [node name="Node2D" type="Node2D" parent="."]
+position = Vector2(-40, -2)
 
 [node name="Structures" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(399, 223)
+position = Vector2(174, -110)
 
 [node name="Structures2" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(565, 223)
+position = Vector2(453, -110)
 
 [node name="Structures3" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(738, 223)
+position = Vector2(713, -110)
 
 [node name="Structures4" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(902, 223)
+position = Vector2(996, -110)
 
 [node name="Structures5" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1078, 223)
+position = Vector2(1298, -110)
 
 [node name="Structures6" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1238, 223)
+position = Vector2(1600, -110)
 
 [node name="Structures7" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1404, 223)
+position = Vector2(1905, -110)
 
 [node name="Structures8" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1575, 223)
+position = Vector2(171, 96)
 
 [node name="Structures9" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(387, 339)
+position = Vector2(450, 96)
 
 [node name="Structures10" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(553, 339)
+position = Vector2(710, 96)
 
 [node name="Structures11" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(726, 339)
+position = Vector2(993, 96)
 
 [node name="Structures12" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(890, 339)
+position = Vector2(1295, 96)
 
 [node name="Structures13" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1066, 339)
+position = Vector2(1597, 96)
 
 [node name="Structures14" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1226, 339)
+position = Vector2(1902, 96)
 
 [node name="Structures15" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1392, 339)
+position = Vector2(181, 331)
 
 [node name="Structures16" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1563, 339)
+position = Vector2(460, 331)
 
 [node name="Structures17" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(383, 471)
+position = Vector2(720, 331)
 
 [node name="Structures18" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(549, 471)
+position = Vector2(1003, 331)
 
 [node name="Structures19" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(722, 471)
+position = Vector2(1305, 331)
 
 [node name="Structures20" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(886, 471)
+position = Vector2(1607, 331)
 
 [node name="Structures21" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1062, 471)
+position = Vector2(1912, 331)
 
-[node name="Structures22" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1222, 471)
-
-[node name="Structures23" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1388, 471)
-
-[node name="Structures24" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1559, 471)
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(711, 788)

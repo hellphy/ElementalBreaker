@@ -22,16 +22,19 @@ var face_direction = 1
 var direction
 
 const SPEED = 700.0
-const ACCELARATION = 900.0
+const ACCELARATION = 1300.0
 const DECELERATION = 5000.0
 const TURNING_ACC = 3000.0
 
 #bools
 var can_jump: bool = true
+var can_walk: bool = true
 
 @onready var r_1: RayCast2D = $R1
 @onready var r_2: RayCast2D = $R2
 @onready var _hurt_box: HurtBox2D = %HurtBox2D
+@onready var player_skin: PlayerSkin = %PlayerSkin
+
 
 #timers
 @onready var jump_buffer_timer: Timer = %JumpBufferTimer
@@ -60,18 +63,30 @@ func set_current_state(new_state: States) -> void:
 	match current_state:
 		
 		States.IDLE:
-			pass
+			can_walk = true
+			player_skin.set_animation_name(player_skin.Animations.IDLE)
+			
 		States.MOVING:
-			pass
+			player_skin.set_animation_name(player_skin.Animations.RUN)
+			
 		States.AIR:
 			if previous_state == States.MOVING or previous_state == States.IDLE:
 				if velocity.y > 0:
+					player_skin.set_animation_name(player_skin.Animations.FALL)
 					coyote_timer.start()
+				if velocity.y < 0:
+					player_skin.set_animation_name(player_skin.Animations.JUMP)
+					
 		States.SLIDING:
 			velocity = Vector2.ZERO
+			
 		States.ATTACKING:
-			%Animations.play("swing_attack")
-			velocity = Vector2.ZERO
+			if is_on_floor():
+				velocity = Vector2.ZERO
+				can_walk = false
+				player_skin.set_animation_name(player_skin.Animations.GROUND_ATTACK)
+			else:
+				set_current_state(States.IDLE)
 		States.STAGGER:
 			velocity = Vector2.ZERO
 			_hurt_box.set_deferred("monitorable", false)
@@ -81,6 +96,7 @@ func set_current_state(new_state: States) -> void:
 				_hurt_box.set_deferred("monitoring", true)
 				set_current_state(States.IDLE)
 			)
+			
 		States.DIED:
 			pass
 
@@ -94,6 +110,9 @@ func _ready() -> void:
 	jump_buffer_timer.timeout.connect(func () -> void:
 		can_jump = false
 	)
+	player_skin.finished_attacking.connect(func() -> void:
+		set_current_state(States.IDLE)
+	)
 
 func _physics_process(delta: float) -> void:
 	
@@ -101,6 +120,7 @@ func _physics_process(delta: float) -> void:
 	match current_state:
 		
 		States.IDLE:
+			
 			_movement(delta)
 			if velocity.x != 0 and is_on_floor():
 				set_current_state(States.MOVING)
@@ -118,6 +138,12 @@ func _physics_process(delta: float) -> void:
 
 		States.AIR:
 			_movement(delta)
+			
+			if velocity.y > 0:
+				player_skin.set_animation_name(player_skin.Animations.FALL)
+			if velocity.y < 0:
+				player_skin.set_animation_name(player_skin.Animations.JUMP)
+				
 			if  is_on_floor() and velocity.x != 0:
 				set_current_state(States.MOVING)
 			
@@ -172,19 +198,20 @@ func take_damage(amount: float) -> void:
 	
 
 func _movement(delta) -> void:
-	direction = Input.get_axis("move_left", "move_right")
-	if direction == 0:
-		velocity.x = Vector2(velocity.x, 0).move_toward(Vector2(0,0), DECELERATION * delta).x
-		return
-
-	if abs(velocity.x) >= SPEED and sign(velocity.x) == direction:
-		return
-
-	var accel_rate : float = ACCELARATION if sign(velocity.x) == direction else TURNING_ACC
-
-	velocity.x += direction * accel_rate * delta
-
-	set_direction(direction)
+	if can_walk:
+		direction = Input.get_axis("move_left", "move_right")
+		if direction == 0:
+			velocity.x = Vector2(velocity.x, 0).move_toward(Vector2(0,0), DECELERATION * delta).x
+			return
+	
+		if abs(velocity.x) >= SPEED and sign(velocity.x) == direction:
+			return
+	
+		var accel_rate : float = ACCELARATION if sign(velocity.x) == direction else TURNING_ACC
+	
+		velocity.x += direction * accel_rate * delta
+	
+		set_direction(direction)
 
 func set_direction(hor_direction) -> void:
 	if hor_direction == 0:
@@ -214,8 +241,11 @@ func _apply_gravity(delta) -> void:
 		
 	velocity.y += applied_gravity
 
-func _on_weapon_body_entered(body: Node2D) -> void:
-	if body.velocity == Vector2.ZERO:
-		body.ball_started = true
-	var knockback : Vector2 = global_position.direction_to(body.global_position) * 3
-	body.velocity = knockback
+
+	#body_entered.connect(func _on_body_entered(body: Node2D) -> void:
+		#if body.velocity == Vector2.ZERO:
+			#body.ball_started = true
+			#
+		#var knockback : Vector2 = global_position.direction_to(body.global_position) * 3
+		#body.velocity = knockback
+	#)

@@ -1,7 +1,5 @@
 extends CharacterBody2D
-
 class_name  Ball
-
 
 var ball_max_speed : = 500
 var ball_speed := 200

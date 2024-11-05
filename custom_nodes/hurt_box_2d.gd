@@ -26,3 +26,4 @@ func _init() -> void:
 			took_hit.emit(area)
 			print("took_hit", area.name)
 	)
+	

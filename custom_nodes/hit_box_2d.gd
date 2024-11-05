@@ -20,11 +20,19 @@ func set_damage_source(new_value: int) -> void:
 	collision_layer = damage_source
 
 func _init() -> void:
-	monitorable = true
-	monitoring = true
 	area_entered.connect(func _on_area_entered(area: Area2D) -> void:
 		if area is HurtBox2D:
 			hit_hurt_box.emit(area)
+	)
+	
+	body_entered.connect(func _on_body_entered(body: Node2D) -> void:
+		if body is Ball:
+			if body.velocity == Vector2.ZERO:
+				body.ball_started = true
+			
+			print("knockback")
+			var knockback : Vector2 = global_position.direction_to(body.global_position) * 3
+			body.velocity = knockback
 	)
 	
 	
