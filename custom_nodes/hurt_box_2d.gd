@@ -24,6 +24,5 @@ func _init() -> void:
 	area_entered.connect(func _on_area_entered(area: Area2D) -> void:
 		if area is HitBox2D:
 			took_hit.emit(area)
-			print("took_hit", area.name)
 	)
 	

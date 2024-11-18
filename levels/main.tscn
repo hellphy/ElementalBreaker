@@ -1,17 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://b65mixf7jmchi"]
+[gd_scene load_steps=6 format=3 uid="uid://b65mixf7jmchi"]
 
 [ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_vfmu5"]
 [ext_resource type="PackedScene" uid="uid://bgi15xx0wq141" path="res://ball/ball.tscn" id="2_uv6mk"]
 [ext_resource type="PackedScene" uid="uid://kuq7x2g7j52a" path="res://player/player.tscn" id="3_whgff"]
-[ext_resource type="Script" path="res://player/velocitydebug.gd" id="5_kn302"]
-[ext_resource type="Script" path="res://player/DebugLabel.gd" id="6_8x4rn"]
 [ext_resource type="PackedScene" uid="uid://b3r2g52v143oj" path="res://enemies/blocks/structures.tscn" id="7_pxjr4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_02v6l"]
-size = Vector2(1839, 40)
-
-[sub_resource type="LabelSettings" id="LabelSettings_0ajpe"]
-font_size = 60
+size = Vector2(1852.49, 40)
 
 [node name="Main" type="Node2D"]
 
@@ -20,12 +15,13 @@ z_index = -10
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -512.0
-offset_top = -310.0
-offset_right = 2425.0
-offset_bottom = 1316.0
+offset_left = -450.0
+offset_top = -320.0
+offset_right = 2487.0
+offset_bottom = 1306.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.847059, 0.317647, 0.317647, 1)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
@@ -64,108 +60,75 @@ texture = ExtResource("1_vfmu5")
 position = Vector2(973.5, -11)
 shape = SubResource("RectangleShape2D_02v6l")
 
-[node name="Sprite2D4" type="Sprite2D" parent="StaticBody2D"]
-position = Vector2(969.238, 1055)
-rotation = 1.57079
-scale = Vector2(0.328125, 14.0451)
-texture = ExtResource("1_vfmu5")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(952.962, 1054)
-rotation = 3.14159
-shape = SubResource("RectangleShape2D_02v6l")
-
-[node name="velocity" type="Label" parent="." node_paths=PackedStringArray("player")]
-visible = false
-offset_left = 65.0
-offset_top = 536.0
-offset_right = 287.0
-offset_bottom = 619.0
-text = "velocity"
-label_settings = SubResource("LabelSettings_0ajpe")
-script = ExtResource("5_kn302")
-player = NodePath("../Player")
-
-[node name="states" type="Label" parent="." node_paths=PackedStringArray("player")]
-offset_left = 67.0
-offset_top = 632.0
-offset_right = 213.0
-offset_bottom = 716.0
-label_settings = SubResource("LabelSettings_0ajpe")
-script = ExtResource("6_8x4rn")
-player = NodePath("../Player")
-
 [node name="Ball" parent="." instance=ExtResource("2_uv6mk")]
-position = Vector2(1106, 783)
+position = Vector2(1104, 428)
 
 [node name="Player" parent="." instance=ExtResource("3_whgff")]
-position = Vector2(677, 1230)
+position = Vector2(677, 841)
 
 [node name="Node2D" type="Node2D" parent="."]
 position = Vector2(-40, -2)
 
 [node name="Structures" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(174, -110)
+position = Vector2(148, -148)
 
 [node name="Structures2" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(453, -110)
+position = Vector2(427, -148)
 
 [node name="Structures3" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(713, -110)
+position = Vector2(687, -148)
 
 [node name="Structures4" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(996, -110)
+position = Vector2(970, -148)
 
 [node name="Structures5" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1298, -110)
+position = Vector2(1272, -148)
 
 [node name="Structures6" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1600, -110)
+position = Vector2(1574, -148)
 
 [node name="Structures7" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1905, -110)
+position = Vector2(1879, -148)
 
 [node name="Structures8" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(171, 96)
+position = Vector2(145, 58)
 
 [node name="Structures9" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(450, 96)
+position = Vector2(424, 58)
 
 [node name="Structures10" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(710, 96)
+position = Vector2(684, 58)
 
 [node name="Structures11" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(993, 96)
+position = Vector2(967, 58)
 
 [node name="Structures12" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1295, 96)
+position = Vector2(1269, 58)
 
 [node name="Structures13" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1597, 96)
+position = Vector2(1571, 58)
 
 [node name="Structures14" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1902, 96)
-
-[node name="Structures15" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(181, 331)
-
-[node name="Structures16" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(460, 331)
-
-[node name="Structures17" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(720, 331)
-
-[node name="Structures18" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1003, 331)
-
-[node name="Structures19" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1305, 331)
-
-[node name="Structures20" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1607, 331)
-
-[node name="Structures21" parent="Node2D" instance=ExtResource("7_pxjr4")]
-position = Vector2(1912, 331)
+position = Vector2(1876, 58)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(711, 788)
+position = Vector2(988, 482)
+zoom = Vector2(0.655, 0.655)
+
+[node name="Ground" type="StaticBody2D" parent="." groups=["Ground"]]
+position = Vector2(0, -376)
+collision_layer = 8
+collision_mask = 7
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Ground"]
+position = Vector2(1005.63, 1261.28)
+rotation = 3.14159
+scale = Vector2(1.50216, 1.50216)
+shape = SubResource("RectangleShape2D_02v6l")
+
+[node name="Sprite2D4" type="Sprite2D" parent="Ground"]
+self_modulate = Color(0.873376, 0.194147, 0.166731, 1)
+position = Vector2(1019.95, 1262.78)
+rotation = 1.57079
+scale = Vector2(0.492896, 21.098)
+texture = ExtResource("1_vfmu5")

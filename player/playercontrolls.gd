@@ -21,10 +21,10 @@ var stagger_amount: float = 0
 var face_direction = 1
 var direction
 
-const SPEED = 700.0
-const ACCELARATION = 1300.0
-const DECELERATION = 5000.0
-const TURNING_ACC = 3000.0
+const SPEED = 900.0
+const ACCELARATION = 1800.0
+const DECELERATION = 8000.0
+const TURNING_ACC = 5000.0
 
 #bools
 var can_jump: bool = true
@@ -34,18 +34,21 @@ var can_walk: bool = true
 @onready var r_2: RayCast2D = $R2
 @onready var _hurt_box: HurtBox2D = %HurtBox2D
 @onready var player_skin: PlayerSkin = %PlayerSkin
-
+@onready var shoot_point: Node2D = %shoot_point
+@onready var shoot_point_marker: Sprite2D = %ShootPointMarker
 
 #timers
 @onready var jump_buffer_timer: Timer = %JumpBufferTimer
 @onready var coyote_timer: Timer = %CoyoteTimer
 #states
+
 enum States {
 	IDLE,
  	MOVING,
  	AIR,
  	SLIDING,
  	ATTACKING,
+	UP_ATTACKING,
 	STAGGER,
 	DIED,
 	
@@ -54,7 +57,6 @@ var previous_state: States = States.IDLE
 
 var current_state = States.IDLE:
 	set = set_current_state
-
 
 func set_current_state(new_state: States) -> void:
 	previous_state = current_state
@@ -81,12 +83,13 @@ func set_current_state(new_state: States) -> void:
 			velocity = Vector2.ZERO
 			
 		States.ATTACKING:
-			if is_on_floor():
-				velocity = Vector2.ZERO
-				can_walk = false
-				player_skin.set_animation_name(player_skin.Animations.GROUND_ATTACK)
+			if shoot_point_marker.global_position.direction_to(global_position).y > 0.98:
+				player_skin.set_animation_name(player_skin.Animations.UP_ATTACK)
+				print("up attack")
+				
 			else:
-				set_current_state(States.IDLE)
+				player_skin.set_animation_name(player_skin.Animations.ATTACK)
+				print("attack")
 		States.STAGGER:
 			velocity = Vector2.ZERO
 			_hurt_box.set_deferred("monitorable", false)
@@ -99,6 +102,7 @@ func set_current_state(new_state: States) -> void:
 			
 		States.DIED:
 			pass
+
 
 func _ready() -> void:
 	_hurt_box.took_hit.connect(func _on_hurtbox_took_hit(hit_box: HitBox2D) -> void:
@@ -114,9 +118,20 @@ func _ready() -> void:
 		set_current_state(States.IDLE)
 	)
 
+
 func _physics_process(delta: float) -> void:
 	
+	shoot_point.look_at(get_global_mouse_position())
+	shoot_point.rotation_degrees -= 90
 	
+	
+	var mouse_to_player := get_global_mouse_position().direction_to(global_position)
+	%rotation.text = str(shoot_point_marker.global_position.direction_to(global_position))
+
+	set_direction(-1) if mouse_to_player.x > 0.0 else set_direction(1)
+	
+	
+
 	match current_state:
 		
 		States.IDLE:
@@ -184,15 +199,22 @@ func jump() -> void:
 		if can_jump:
 			velocity.y = -jump_force
 			can_jump = false
+	if Input.is_action_just_released("jump"):
+		velocity.y *= 0.2
 	
 	
 func _unhandled_input(event: InputEvent) -> void:
 	
+	#if Input.is_action_just_pressed("attack") and Input.is_action_pressed("up"):
+		#print("up_attack")
+		#set_current_state(States.UP_ATTACKING)
+		#
+
 	if Input.is_action_just_pressed("attack"):
 		set_current_state(States.ATTACKING)
 
+
 func take_damage(amount: float) -> void:
-	("print staggered")
 	stagger_amount = amount
 	set_current_state(States.STAGGER)
 	
@@ -210,17 +232,18 @@ func _movement(delta) -> void:
 		var accel_rate : float = ACCELARATION if sign(velocity.x) == direction else TURNING_ACC
 	
 		velocity.x += direction * accel_rate * delta
-	
-		set_direction(direction)
+	#
+		#set_direction(direction)
 
 func set_direction(hor_direction) -> void:
 	if hor_direction == 0:
 		return
-	apply_scale(Vector2(hor_direction * face_direction, 1))
+	player_skin.apply_scale(Vector2(hor_direction * face_direction, 1))
+	shoot_point.apply_scale(Vector2(hor_direction * face_direction, 1))
 	face_direction = hor_direction
 
 func _apply_gravity(delta) -> void:
-	if current_state == States.ATTACKING or current_state == States.STAGGER:
+	if current_state == States.STAGGER:
 		return
 	
 	var applied_gravity : float = 0
@@ -240,12 +263,3 @@ func _apply_gravity(delta) -> void:
 		
 		
 	velocity.y += applied_gravity
-
-
-	#body_entered.connect(func _on_body_entered(body: Node2D) -> void:
-		#if body.velocity == Vector2.ZERO:
-			#body.ball_started = true
-			#
-		#var knockback : Vector2 = global_position.direction_to(body.global_position) * 3
-		#body.velocity = knockback
-	#)

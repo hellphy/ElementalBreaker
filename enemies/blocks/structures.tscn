@@ -18,4 +18,5 @@ scale = Vector2(190, 86)
 texture = SubResource("CanvasTexture_iff50")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
 shape = SubResource("RectangleShape2D_hsnrh")

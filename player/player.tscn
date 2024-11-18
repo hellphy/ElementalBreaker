@@ -1,27 +1,35 @@
-[gd_scene load_steps=6 format=3 uid="uid://kuq7x2g7j52a"]
+[gd_scene load_steps=10 format=3 uid="uid://kuq7x2g7j52a"]
 
 [ext_resource type="Script" path="res://player/playercontrolls.gd" id="1_cumyv"]
 [ext_resource type="PackedScene" uid="uid://dw7elais0arm8" path="res://player/player_skin.tscn" id="3_r3ppc"]
 [ext_resource type="Script" path="res://custom_nodes/hurt_box_2d.gd" id="3_y0t3a"]
+[ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="4_vds3r"]
+[ext_resource type="Script" path="res://player/DebugLabel.gd" id="6_t2tb1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0tfmf"]
-size = Vector2(116, 258.625)
+size = Vector2(116, 283.625)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3vrkw"]
 radius = 93.0
 height = 376.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_bqahv"]
+font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_p3fss"]
+font_size = 60
 
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 10
 script = ExtResource("1_cumyv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-3, -129.688)
+position = Vector2(-3, -142.188)
 shape = SubResource("RectangleShape2D_0tfmf")
 
 [node name="R1" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-33, -129)
+position = Vector2(-12, -237)
 rotation = 1.57079
 scale = Vector2(2.85167, 0.871935)
 target_position = Vector2(0.000177383, -92.8968)
@@ -29,7 +37,7 @@ collision_mask = 8
 
 [node name="R2" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-33, -25)
+position = Vector2(-13, -22)
 rotation = 1.57079
 scale = Vector2(2.85167, 0.871935)
 target_position = Vector2(0.000178337, -92.8968)
@@ -45,19 +53,48 @@ damage_source = 2
 position = Vector2(-1, -159)
 shape = SubResource("CapsuleShape2D_3vrkw")
 
-[node name="Node" type="Node" parent="."]
+[node name="Timers" type="Node" parent="."]
 
-[node name="JumpBufferTimer" type="Timer" parent="Node"]
+[node name="JumpBufferTimer" type="Timer" parent="Timers"]
 unique_name_in_owner = true
 wait_time = 0.1
 one_shot = true
 
-[node name="CoyoteTimer" type="Timer" parent="Node"]
+[node name="CoyoteTimer" type="Timer" parent="Timers"]
 unique_name_in_owner = true
 wait_time = 0.1
 one_shot = true
 
 [node name="PlayerSkin" parent="." instance=ExtResource("3_r3ppc")]
 unique_name_in_owner = true
+
+[node name="states" type="Label" parent="." node_paths=PackedStringArray("player")]
+offset_left = -157.0
+offset_top = -551.0
+offset_right = 193.0
+offset_bottom = -467.0
+text = "State is: Idle"
+label_settings = SubResource("LabelSettings_bqahv")
+script = ExtResource("6_t2tb1")
+player = NodePath("..")
+
+[node name="shoot_point" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-4, -157)
+
+[node name="ShootPointMarker" type="Sprite2D" parent="shoot_point"]
+unique_name_in_owner = true
+position = Vector2(0, 400)
+scale = Vector2(0.40625, 0.40625)
+texture = ExtResource("4_vds3r")
+
+[node name="rotation" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -62.0
+offset_top = -464.0
+offset_right = 124.0
+offset_bottom = -381.0
+text = "180"
+label_settings = SubResource("LabelSettings_p3fss")
 
 [editable path="PlayerSkin"]
