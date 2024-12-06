@@ -19,6 +19,7 @@ enum Animations {
 
 @export var animation_name: Animations = Animations.IDLE: set = set_animation_name
 
+
 func _ready() -> void:
 	set_animation_name(Animations.IDLE)
 	
@@ -27,8 +28,10 @@ func _ready() -> void:
 			finished_attacking.emit()
 	)
 
-func _physics_process(delta: float) -> void:
+
+func _process(_delta: float) -> void:
 	main_attack_hit_box.shoot_point_angle = shoot_point.rotation_degrees
+
 
 func set_animation_name(new_animation: Animations) -> void:
 	if animation_name == new_animation:

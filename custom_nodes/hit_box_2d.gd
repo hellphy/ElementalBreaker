@@ -12,7 +12,7 @@ enum Attacks {
 	UP_ATTACK,
 }
 
-@export var type_of_attack: Attacks
+@export var attack_type: Attacks
 @export var damage := 1.0
 @export_flags("Player", "Mob", "Ball") var damage_source := DAMAGE_SOURCE_PLAYER: set = set_damage_source
 @export_flags("Player", "Mob", "Ball") var detect_hurtboxes := DAMAGE_SOURCE_MOB: set = set_detected_hurtboxes

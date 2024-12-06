@@ -1,16 +1,16 @@
 extends HitBox2D
 
-var travelled_distance := 0
+var travelled_distance := 0.0
+@export var speed = 800.0
+@export var max_range = 800.0
 
 func _physics_process(delta: float) -> void:
-	const SPEED = 800
-	const RANGE = 800
-	
+
 	var direction = Vector2.RIGHT.rotated(rotation)
-	position += direction * SPEED * delta
+	position += direction * speed * delta
 	
-	travelled_distance += SPEED * delta
-	if travelled_distance > RANGE:
+	travelled_distance += speed * delta
+	if travelled_distance > max_range:
 		queue_free()
 
 

@@ -84,7 +84,7 @@ position = Vector2(-4, -157)
 
 [node name="ShootPointMarker" type="Sprite2D" parent="shoot_point"]
 unique_name_in_owner = true
-position = Vector2(0, 400)
+position = Vector2(0, 321)
 scale = Vector2(0.40625, 0.40625)
 texture = ExtResource("4_vds3r")
 
