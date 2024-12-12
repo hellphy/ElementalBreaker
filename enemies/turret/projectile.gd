@@ -1,8 +1,8 @@
 extends HitBox2D
 
 var travelled_distance := 0.0
-@export var speed = 800.0
-@export var max_range = 800.0
+@export var speed = 900.0
+@export var max_range = 2000.0
 
 func _physics_process(delta: float) -> void:
 

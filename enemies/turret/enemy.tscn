@@ -1,48 +1,31 @@
-[gd_scene load_steps=7 format=3 uid="uid://d2yp4v6pjpdr2"]
+[gd_scene load_steps=6 format=3 uid="uid://d2yp4v6pjpdr2"]
 
 [ext_resource type="Script" path="res://enemies/turret/enemy.gd" id="1_nhp2g"]
 [ext_resource type="Script" path="res://custom_nodes/hurt_box_2d.gd" id="2_uedf3"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_nf3fx"]
-radius = 30.0167
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_c8hg6"]
-radius = 943.687
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_2vuhx"]
+[ext_resource type="Texture2D" uid="uid://deslqlkmbcs4w" path="res://enemies/turret/towerDefense_tile249.png" id="3_b2kse"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vyxr6"]
-radius = 50.0899
+radius = 65.0305
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5qq8p"]
+size = Vector2(86.9994, 86.0006)
 
 [node name="enemy" type="Area2D"]
 top_level = true
 collision_layer = 2
 script = ExtResource("1_nhp2g")
 
-[node name="block_detection" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_nf3fx")
-
-[node name="PlayerDetection" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_c8hg6")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 0, 0, 1)
-rotation = -1.5708
-scale = Vector2(20, 44.0352)
-texture = SubResource("CanvasTexture_2vuhx")
-offset = Vector2(0.05, 0.297297)
-
-[node name="ShootingPoint" type="Marker2D" parent="Sprite2D"]
+[node name="ShootingPoint" type="Marker2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-7.64949e-08, 0.794819)
-rotation = 1.5708
-scale = Vector2(0.0227091, 0.05)
+position = Vector2(64.0003, 3.00029)
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 2.0
 autostart = true
 
 [node name="HurtBox2D" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-2.99971, -17.9997)
 collision_layer = 2
 collision_mask = 4
 script = ExtResource("2_uedf3")
@@ -50,7 +33,18 @@ damage_source = 4
 hurtbox_type = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox2D"]
+position = Vector2(5, 23)
 shape = SubResource("CircleShape2D_vyxr6")
+
+[node name="TowerDefenseTile249" type="Sprite2D" parent="."]
+position = Vector2(43.0003, 3.00029)
+rotation = 1.57079
+scale = Vector2(4.09375, 4.09375)
+texture = ExtResource("3_b2kse")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-12.4997, 10.0003)
+shape = SubResource("RectangleShape2D_5qq8p")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

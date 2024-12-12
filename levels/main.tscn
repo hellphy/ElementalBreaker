@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://b65mixf7jmchi"]
+[gd_scene load_steps=10 format=3 uid="uid://b65mixf7jmchi"]
 
 [ext_resource type="Script" path="res://levels/Game.gd" id="1_483ob"]
 [ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_vfmu5"]
 [ext_resource type="PackedScene" uid="uid://bgi15xx0wq141" path="res://ball/ball.tscn" id="2_uv6mk"]
+[ext_resource type="Texture2D" uid="uid://cy4r3ievvclbg" path="res://enemies/blocks/blue_grass.png" id="2_wl0gg"]
 [ext_resource type="Script" path="res://levels/ground.gd" id="2_yf8ed"]
 [ext_resource type="PackedScene" uid="uid://kuq7x2g7j52a" path="res://player/player.tscn" id="3_whgff"]
 [ext_resource type="PackedScene" uid="uid://b3r2g52v143oj" path="res://enemies/blocks/block.tscn" id="7_pxjr4"]
+[ext_resource type="PackedScene" uid="uid://d2yp4v6pjpdr2" path="res://enemies/turret/enemy.tscn" id="8_njvty"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_02v6l"]
 size = Vector2(1852.49, 40)
@@ -13,7 +15,16 @@ size = Vector2(1852.49, 40)
 [node name="Main" type="Node2D"]
 script = ExtResource("1_483ob")
 
+[node name="BlueGrass" type="Sprite2D" parent="."]
+modulate = Color(0.34067, 0.493211, 0.389047, 1)
+z_index = -20
+texture_filter = 1
+position = Vector2(1016, 394.25)
+scale = Vector2(2.8623, 2.77588)
+texture = ExtResource("2_wl0gg")
+
 [node name="ColorRect" type="ColorRect" parent="."]
+visible = false
 z_index = -10
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,8 +45,8 @@ collision_layer = 8
 collision_mask = 7
 
 [node name="Sprite2D" type="Sprite2D" parent="Walls"]
-position = Vector2(19.5, 543)
-scale = Vector2(0.429688, 8.76563)
+position = Vector2(19.5, 317.338)
+scale = Vector2(0.429688, 12.2916)
 texture = ExtResource("1_vfmu5")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="Walls"]
@@ -44,8 +55,8 @@ rotation = -1.5708
 shape = SubResource("RectangleShape2D_02v6l")
 
 [node name="Sprite2D2" type="Sprite2D" parent="Walls"]
-position = Vector2(1890, 585.5)
-scale = Vector2(0.328125, 8.63281)
+position = Vector2(1890, 352.645)
+scale = Vector2(0.328125, 12.2712)
 texture = ExtResource("1_vfmu5")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Walls"]
@@ -54,13 +65,13 @@ rotation = 1.57079
 shape = SubResource("RectangleShape2D_02v6l")
 
 [node name="Sprite2D3" type="Sprite2D" parent="Walls"]
-position = Vector2(967.656, -9.00069)
+position = Vector2(967.578, -364.439)
 rotation = 1.57079
 scale = Vector2(0.328125, 14.4631)
 texture = ExtResource("1_vfmu5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls"]
-position = Vector2(973.5, -11)
+position = Vector2(973.422, -366.438)
 shape = SubResource("RectangleShape2D_02v6l")
 
 [node name="Ground" type="StaticBody2D" parent="." groups=["Ground"]]
@@ -84,10 +95,12 @@ texture = ExtResource("1_vfmu5")
 [node name="Ball" parent="." instance=ExtResource("2_uv6mk")]
 position = Vector2(1104, 829)
 
-[node name="Player" parent="." instance=ExtResource("3_whgff")]
+[node name="Player" parent="." node_paths=PackedStringArray("ball") instance=ExtResource("3_whgff")]
 position = Vector2(677, 1282)
+ball = NodePath("../Ball")
 
 [node name="Structures" type="Node2D" parent="."]
+position = Vector2(-21, -507)
 
 [node name="Structures" parent="Structures" instance=ExtResource("7_pxjr4")]
 position = Vector2(167, -56)
@@ -152,6 +165,14 @@ position = Vector2(1590, 531)
 [node name="Structures21" parent="Structures" instance=ExtResource("7_pxjr4")]
 position = Vector2(1895, 531)
 
+[node name="enemy" parent="Structures" node_paths=PackedStringArray("player") instance=ExtResource("8_njvty")]
+position = Vector2(139, -274)
+player = NodePath("../../Player")
+
+[node name="enemy2" parent="Structures" node_paths=PackedStringArray("player") instance=ExtResource("8_njvty")]
+position = Vector2(1874, -272)
+player = NodePath("../../Player")
+
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(988, 482)
-zoom = Vector2(0.655, 0.655)
+position = Vector2(999, 252)
+zoom = Vector2(0.49, 0.49)

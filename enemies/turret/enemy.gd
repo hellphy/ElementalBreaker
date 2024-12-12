@@ -4,22 +4,30 @@ extends Area2D
 @onready var timer: Timer = $Timer
 @export var player: Player = null
 
-var stop_shooting = false
+var can_shoot = false
+@onready var hurt_box_2d: HurtBox2D = %HurtBox2D
+
 
 func _ready() -> void:
-	timer.timeout.connect(_on_timer_timeout)
+	hurt_box_2d.took_hit.connect(func _on_hurtbox_took_hit(hit_box: HitBox2D) -> void:
+		queue_free()
+	)
+	
+	SignalBus.ball_started.connect(func() -> void:
+		can_shoot = !can_shoot
+	)
+	
+	timer.timeout.connect(func() -> void:
+		shoot()
+	)
 
-func _physics_process(delta: float) -> void:
-	var player_in_range = get_overlapping_bodies()
-	if player_in_range.size() > 0:
-		stop_shooting = false
-		var target_player = player_in_range.pop_front()
-		look_at(target_player.global_position)
-	else:
-		stop_shooting = true
+
+func _process(delta: float) -> void:
+		look_at(player.global_position)
+
 
 func shoot() -> void:
-	if stop_shooting == false:
+	if can_shoot == true:
 		const PROJECTILE = preload("res://enemies/turret/projectile.tscn")
 		var new_projectile = PROJECTILE.instantiate()
 		new_projectile.global_position = shooting_point.global_position
@@ -27,7 +35,3 @@ func shoot() -> void:
 		shooting_point.add_child(new_projectile)
 	else:
 		pass
-
-func _on_timer_timeout():
-	if overlaps_body(player):
-		shoot()

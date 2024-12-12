@@ -1,6 +1,8 @@
 class_name Player extends CharacterBody2D
 
 
+@export var ball: Ball
+
 var health := 3: set = set_health
 #gravity
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -25,11 +27,12 @@ var direction
 const SPEED = 900.0
 const ACCELARATION = 1800.0
 const DECELERATION = 8000.0
-const TURNING_ACC = 5000.0
+const TURNING_ACC = 10000.0
 
 #bools
 var can_jump: bool = true
 var can_walk: bool = true
+var can_attack: bool = true
 
 @onready var r_1: RayCast2D = $R1
 @onready var r_2: RayCast2D = $R2
@@ -89,20 +92,26 @@ func set_current_state(new_state: States) -> void:
 				
 			else:
 				player_skin.set_animation_name(player_skin.Animations.ATTACK)
+				
 		States.STAGGER:
-			velocity = Vector2.ZERO
+			var skin_tween := create_tween()
+			skin_tween.tween_property(player_skin,"modulate", Color.RED, 0.2)
+			skin_tween.tween_property(player_skin,"modulate", Color.WHITE, 0.2)
 			
 			_hurt_box.set_deferred("monitorable", false)
 			_hurt_box.set_deferred("monitoring", false)
 			
+			get_tree().create_timer(0.5).timeout.connect(func() -> void:
+				set_current_state(States.IDLE)
+			)
 			get_tree().create_timer(stagger_amount).timeout.connect(func() -> void:
 				_hurt_box.set_deferred("monitorable", true)
 				_hurt_box.set_deferred("monitoring", true)
-				set_current_state(States.IDLE)
 			)
 			
 		States.DIED:
 			get_tree().reload_current_scene()
+
 
 
 func set_health(new_health) -> void:
@@ -142,6 +151,7 @@ func _process(_delta: float) -> void:
 	shoot_point.rotation_degrees -= 90
 	
 	set_direction(-1) if mouse_to_player.x > 0.0 else set_direction(1)
+
 
 func _physics_process(delta: float) -> void:
 
@@ -197,12 +207,25 @@ func _physics_process(delta: float) -> void:
 			if !is_on_floor() and !is_on_wall():
 				set_current_state(States.AIR)
 				
-	if Input.is_action_just_pressed("attack"):
+		States.STAGGER:
+				velocity = Vector2.ZERO
+				
+	if Input.is_action_just_pressed("attack") and can_attack:
+		
+		if current_state == States.STAGGER:
+			return
+			
+		can_attack = false
+		
+		get_tree().create_timer(0.5).timeout.connect(func() -> void:
+			can_attack = true
+		)
 		set_current_state(States.ATTACKING)
 		
 	jump()
 	_apply_gravity(delta)
 	move_and_slide()
+
 
 func jump() -> void:
 	if is_on_floor():
@@ -242,6 +265,7 @@ func _movement(delta) -> void:
 	#
 		#set_direction(direction)
 
+
 func set_direction(hor_direction) -> void:
 	if hor_direction == 0:
 		return
@@ -251,9 +275,7 @@ func set_direction(hor_direction) -> void:
 
 
 func _apply_gravity(delta) -> void:
-	if current_state == States.STAGGER:
-		return
-	
+
 	var applied_gravity : float = 0
 	
 	if velocity.y <= max_velocity:

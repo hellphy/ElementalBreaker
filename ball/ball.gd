@@ -2,14 +2,17 @@ class_name  Ball extends CharacterBody2D
 
 
 const VELOCITY_LIMIT = 40
+
 @export var ball_speed = 0.0
 
-var ball_started := false
 var starting_position: Vector2
+
 
 var speed_up_factor = 1.01
 var start_position: Vector2
 var last_collider_id
+
+var current_trail: Trail
 
 @onready var guide: Sprite2D = $guide
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D 	
@@ -18,6 +21,7 @@ var last_collider_id
 
 func _ready() -> void:
 	starting_position = position
+	reset_ball()
 	
 	_hurt_box.took_hit.connect(func _on_hurtbox_took_hit(hit_box: HitBox2D) -> void:
 		bounce_ball(hit_box.shoot_point_angle, hit_box.attack_type)
@@ -83,13 +87,13 @@ func reset_ball() -> void:
 func bounce_ball(shoot_point_angle, attack_type) -> void:
 	
 	if velocity == Vector2.ZERO:
+		SignalBus.ball_started.emit()
 		rotation = guide.rotation
-		ball_speed = 200.0
+		ball_speed = 220.0
 		guide.visible = !guide.visible
-		
-	set_physics_process(false)
-	await get_tree().create_timer(0.05).timeout
-	set_physics_process(true)
+		make_trail()
+
+
 	match attack_type:
 		#normal attack
 		0:
@@ -99,4 +103,12 @@ func bounce_ball(shoot_point_angle, attack_type) -> void:
 		#up attack
 		1:
 			rotation = Vector2.UP.angle()
+	
+func make_trail() -> void:
+	if current_trail:
+		current_trail.stop()
+	current_trail = Trail.create()
+	add_child(current_trail)
+	
+	
 	
