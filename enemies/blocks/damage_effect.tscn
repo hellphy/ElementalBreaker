@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://rpb1fk5ypd2d"]
+
+[ext_resource type="Texture2D" uid="uid://jpeaj1ykd74r" path="res://icon.svg" id="1_7ge7d"]
+
+[sub_resource type="Curve" id="Curve_imbku"]
+_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_2g0as"]
+curve = SubResource("Curve_imbku")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nbncb"]
+particle_flag_disable_z = true
+initial_velocity_max = 306.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
+scale_max = 0.2
+scale_curve = SubResource("CurveTexture_2g0as")
+
+[node name="Damage_Effect" type="GPUParticles2D"]
+z_index = 5
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_nbncb")
+texture = ExtResource("1_7ge7d")
+one_shot = true
+explosiveness = 0.6
+randomness = 0.47

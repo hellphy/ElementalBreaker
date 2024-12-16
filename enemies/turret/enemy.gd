@@ -23,7 +23,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-		look_at(player.global_position)
+	look_at(player.global_position)
 
 
 func shoot() -> void:

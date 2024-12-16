@@ -5,7 +5,7 @@ const MAX_POINTS := 400
 @onready var curve := Curve2D.new()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	curve.add_point(get_parent().position)
 	
 	if curve.get_baked_points().size() > MAX_POINTS:
@@ -21,5 +21,5 @@ func stop() -> void:
 
 
 static func create() -> Trail:
-	var scene = preload("res://trail.tscn")
+	var scene = preload("res://ball/trail.tscn")
 	return scene.instantiate()

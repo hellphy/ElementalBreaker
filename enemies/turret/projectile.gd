@@ -12,7 +12,3 @@ func _physics_process(delta: float) -> void:
 	travelled_distance += speed * delta
 	if travelled_distance > max_range:
 		queue_free()
-
-
-func _on_body_entered(body: Node2D) -> void:
-	pass

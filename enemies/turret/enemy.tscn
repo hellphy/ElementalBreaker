@@ -13,6 +13,7 @@ size = Vector2(86.9994, 86.0006)
 [node name="enemy" type="Area2D"]
 top_level = true
 collision_layer = 2
+collision_mask = 0
 script = ExtResource("1_nhp2g")
 
 [node name="ShootingPoint" type="Marker2D" parent="."]

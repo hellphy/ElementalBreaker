@@ -1,12 +1,10 @@
 class_name  Ball extends CharacterBody2D
 
-
 const VELOCITY_LIMIT = 40
 
 @export var ball_speed = 0.0
 
 var starting_position: Vector2
-
 
 var speed_up_factor = 1.01
 var start_position: Vector2
@@ -38,7 +36,18 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	var collider = collision.get_collider()
+	
 	if collider is Block:
+		var explosion_vfx = preload("res://enemies/blocks/damage_effect.tscn").instantiate()
+		add_sibling(explosion_vfx)
+		explosion_vfx.global_position = collision.get_position()
+		explosion_vfx.global_rotation = collision.get_normal().angle()
+		
+		explosion_vfx.emitting = true
+		explosion_vfx.finished.connect(func() -> void:
+			explosion_vfx.queue_free()
+		)
+
 		collider.decrease_level()
 		velocity = velocity.bounce(collision.get_normal())
 		#ball_collision(collider)
@@ -92,12 +101,12 @@ func bounce_ball(shoot_point_angle, attack_type) -> void:
 		ball_speed = 220.0
 		guide.visible = !guide.visible
 		make_trail()
-
+		return
 
 	match attack_type:
 		#normal attack
 		0:
-			var random_angle := randf_range(1,1.2)
+			var random_angle := randf_range(1,1.3)
 			rotation_degrees = shoot_point_angle + 90 * random_angle
 			ball_speed += 2
 		#up attack

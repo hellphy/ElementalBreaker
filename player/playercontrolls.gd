@@ -29,22 +29,29 @@ const ACCELARATION = 1800.0
 const DECELERATION = 8000.0
 const TURNING_ACC = 10000.0
 
+const DASH_AMOUNT = 1200.0
+const DASH_DURATION = 0.5
+
 #bools
 var can_jump: bool = true
-var can_walk: bool = true
 var can_attack: bool = true
+var can_dash: bool = true
+var can_move: bool = true
 
 @onready var r_1: RayCast2D = $R1
 @onready var r_2: RayCast2D = $R2
+
 @onready var _hurt_box: HurtBox2D = %HurtBox2D
 @onready var player_skin: PlayerSkin = %PlayerSkin
+
 @onready var shoot_point: Node2D = %shoot_point
 @onready var shoot_point_marker: Sprite2D = %ShootPointMarker
+
 @onready var ground: StaticBody2D = %Ground
 
-#timers
 @onready var jump_buffer_timer: Timer = %JumpBufferTimer
 @onready var coyote_timer: Timer = %CoyoteTimer
+
 #states
 enum States {
 	IDLE,
@@ -54,27 +61,29 @@ enum States {
  	ATTACKING,
 	UP_ATTACKING,
 	STAGGER,
+	DASHING,
 	DIED,
-	
+
 }
 var previous_state: States = States.IDLE
 
 var current_state = States.IDLE:
 	set = set_current_state
 
+
 func set_current_state(new_state: States) -> void:
 	previous_state = current_state
 	current_state = new_state
-	
+
 	match current_state:
-		
+
 		States.IDLE:
-			can_walk = true
+			can_move = true
 			player_skin.set_animation_name(player_skin.Animations.IDLE)
-			
+
 		States.MOVING:
 			player_skin.set_animation_name(player_skin.Animations.RUN)
-			
+
 		States.AIR:
 			if previous_state == States.MOVING or previous_state == States.IDLE:
 				if velocity.y > 0:
@@ -82,17 +91,31 @@ func set_current_state(new_state: States) -> void:
 					coyote_timer.start()
 				if velocity.y < 0:
 					player_skin.set_animation_name(player_skin.Animations.JUMP)
-					
+
 		States.SLIDING:
 			velocity = Vector2.ZERO
+
+		States.DASHING:
+			_hurt_box.monitoring = false
+			player_skin.modulate = Color.GRAY
+			velocity.y = 0.0
 			
+			velocity.x = DASH_AMOUNT * face_direction
+			
+			get_tree().create_timer(DASH_DURATION).timeout.connect(func() -> void:
+				velocity.x = 0.0
+				player_skin.modulate = Color.WHITE
+				_hurt_box.monitoring = true
+				set_current_state(States.IDLE)
+			)
+
 		States.ATTACKING:
 			if shoot_point_marker.global_position.direction_to(global_position).y > 0.99:
 				player_skin.set_animation_name(player_skin.Animations.UP_ATTACK)
 				
 			else:
 				player_skin.set_animation_name(player_skin.Animations.ATTACK)
-				
+
 		States.STAGGER:
 			var skin_tween := create_tween()
 			skin_tween.tween_property(player_skin,"modulate", Color.RED, 0.2)
@@ -108,10 +131,9 @@ func set_current_state(new_state: States) -> void:
 				_hurt_box.set_deferred("monitorable", true)
 				_hurt_box.set_deferred("monitoring", true)
 			)
-			
+
 		States.DIED:
 			get_tree().reload_current_scene()
-
 
 
 func set_health(new_health) -> void:
@@ -139,7 +161,6 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	
 	if shoot_point_marker.global_position.direction_to(global_position).y > 0.99:
 		shoot_point_marker.modulate = Color.RED
 	else:
@@ -155,12 +176,11 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 
-	%rotation.text = str(health)
+	%rotation.text = str(velocity)
 
 	match current_state:
 		
 		States.IDLE:
-			
 			_movement(delta)
 			if velocity.x != 0 and is_on_floor():
 				set_current_state(States.MOVING)
@@ -206,12 +226,19 @@ func _physics_process(delta: float) -> void:
 				
 			if !is_on_floor() and !is_on_wall():
 				set_current_state(States.AIR)
-				
+
 		States.STAGGER:
 				velocity = Vector2.ZERO
-				
+
+	attack()
+	dash()
+	jump()
+	_apply_gravity(delta)
+	move_and_slide()
+
+
+func attack() -> void:
 	if Input.is_action_just_pressed("attack") and can_attack:
-		
 		if current_state == States.STAGGER:
 			return
 			
@@ -221,10 +248,15 @@ func _physics_process(delta: float) -> void:
 			can_attack = true
 		)
 		set_current_state(States.ATTACKING)
-		
-	jump()
-	_apply_gravity(delta)
-	move_and_slide()
+
+
+func dash() -> void:
+	if Input.is_action_just_pressed("dash") and can_dash:
+		can_dash = false
+		get_tree().create_timer(1).timeout.connect(func() -> void:
+			can_dash = true
+		)
+		set_current_state(States.DASHING)
 
 
 func jump() -> void:
@@ -250,19 +282,18 @@ func take_damage(amount: float) -> void:
 
 
 func _movement(delta) -> void:
-	if can_walk:
+	if can_move:
 		direction = Input.get_axis("move_left", "move_right")
 		if direction == 0:
 			velocity.x = Vector2(velocity.x, 0).move_toward(Vector2(0,0), DECELERATION * delta).x
 			return
-	
+		
 		if abs(velocity.x) >= SPEED and sign(velocity.x) == direction:
 			return
-	
+		
 		var accel_rate : float = ACCELARATION if sign(velocity.x) == direction else TURNING_ACC
-	
+		
 		velocity.x += direction * accel_rate * delta
-	#
 		#set_direction(direction)
 
 
@@ -275,7 +306,10 @@ func set_direction(hor_direction) -> void:
 
 
 func _apply_gravity(delta) -> void:
-
+	
+	if current_state == States.DASHING:
+		return
+	
 	var applied_gravity : float = 0
 	
 	if velocity.y <= max_velocity:

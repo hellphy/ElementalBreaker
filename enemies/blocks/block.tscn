@@ -1,19 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://b3r2g52v143oj"]
+[gd_scene load_steps=5 format=3 uid="uid://b3r2g52v143oj"]
 
 [ext_resource type="Script" path="res://enemies/blocks/block.gd" id="1_38hw6"]
+[ext_resource type="Texture2D" uid="uid://dtkh6ve1234tp" path="res://enemies/blocks/glass.png" id="2_xuhet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hsnrh"]
-size = Vector2(180, 180)
+size = Vector2(166, 164)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tc4ev"]
+size = Vector2(198, 194)
 
 [node name="Block" type="StaticBody2D" groups=["blocks"]]
 collision_layer = 2
-collision_mask = 4
+collision_mask = 0
 script = ExtResource("1_38hw6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, 1.90735e-06)
 scale = Vector2(1.28571, 1.28571)
+texture = ExtResource("2_xuhet")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 unique_name_in_owner = true
 shape = SubResource("RectangleShape2D_hsnrh")
+
+[node name="detect_area" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detect_area"]
+shape = SubResource("RectangleShape2D_tc4ev")
